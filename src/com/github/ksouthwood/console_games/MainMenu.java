@@ -1,12 +1,17 @@
 package com.github.ksouthwood.console_games;
 
+import com.github.ksouthwood.console_games.battleship.Battleship;
+import com.github.ksouthwood.console_games.connect_four.ConnectFour;
+import com.github.ksouthwood.console_games.indigo.Indigo;
+import com.github.ksouthwood.console_games.tic_tac_toe.TicTacToe;
+import com.github.ksouthwood.console_games.TextInput.TextInput;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.function.Function;
 
 public class MainMenu {
-    private static final Scanner scanner = new Scanner(System.in);
+
+    private final TextInput textInput = new TextInput();
 
     private static final ArrayList<String> gameList = new ArrayList<>(List.of(
             "Tic-Tac-Toe",
@@ -35,31 +40,19 @@ public class MainMenu {
     private void chooseGame() {
         printGameList();
 
-        int choice = getGameChoice();
+        int choice = textInput.getNumberInRange(
+                "Please enter the number for the game you wish to play: ",
+                1,
+                gameList.size()
+        );
 
         System.out.println("Preparing to play " + gameList.get(choice - 1) + "...");
-    }
-
-    private static int getGameChoice() {
-        int choice = 0;
-        int numOfGames = gameList.size();
-        Function<Integer, Boolean> validRange = (num -> num > 0 && num <= numOfGames);
-        String errorMsg = "That is an invalid choice. Please choose a number in the range 1-%d.\n\n";
-
-        do {
-            System.out.println("Please enter the number for the game you wish to play: ");
-            String input = scanner.nextLine();
-            if (input.matches("\\d")) {
-                choice = Integer.parseInt(input);
-                if (validRange.apply(choice)) {
-                    break;
-                }
-                System.out.printf(errorMsg, numOfGames);
-                continue;
-            }
-            System.out.printf(errorMsg, numOfGames);
-        } while (!(validRange.apply(choice)));
-        return choice;
+        switch (choice) {
+            case 1 -> new TicTacToe().start();
+            case 2 -> new ConnectFour().start();
+            case 3 -> new Battleship().start();
+            case 4 -> new Indigo().start();
+        }
     }
 
     private static void printGameList() {
