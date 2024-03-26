@@ -1,8 +1,11 @@
 package com.github.ksouthwood.console_games.tic_tac_toe;
 
 enum GameState {
-    NOT_DONE,
+    MENU,
+    SET_PLAYERS,
+    NO_WINNER,
     X_WON,
     O_WON,
-    DRAW
+    DRAW,
+    EXIT
 }
