@@ -1,9 +1,12 @@
 package com.github.ksouthwood.console_games;
 
+import com.github.ksouthwood.console_games.TextInput.ConsoleIOHandler;
+
 public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {
-            new MainMenu().mainMenu();
+            ConsoleIOHandler console = new ConsoleIOHandler(System.in, System.out);
+            new MainMenu(console).mainMenu();
         } else {
             parseArgs();
         }
