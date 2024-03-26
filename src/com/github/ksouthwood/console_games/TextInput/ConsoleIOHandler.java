@@ -20,11 +20,26 @@ public class ConsoleIOHandler {
         this.output = output;
     }
 
-    public void println(String msg) {
+    /**
+     * Output a String to a PrintStream with a line break
+     * <p>
+     * Takes the supplied String and outputs it to the PrintStream, then terminates the line. (Usually with "\n".)
+     *
+     * @param msg String to be printed to the output
+     */
+    public void println(final String msg) {
         output.println(msg);
     }
 
-    public void print(String msg) {
+    /**
+     * Output a String to a PrintStream without a line ending
+     * <p>
+     * Takes the supplied String and outputs it to the PrintStream without terminating the line. The next output to the
+     * PrintStream (either via print() or println()) will immediately follow this output.
+     *
+     * @param msg String to be printed to the output
+     */
+    public void print(final String msg) {
         output.print(msg);
         output.flush();
     }
@@ -45,20 +60,44 @@ public class ConsoleIOHandler {
         }
     }
 
+    /**
+     * Get and discard whatever is next on the input
+     * <p>
+     * Effectively discards whatever is next on the input since we don't save it in anyway.
+     */
     public void getAnything() {
         input.nextLine();
     }
 
+    /**
+     * Read a line from the InputStream and trim leading/trailing spaces
+     *
+     * @return the next line on the input without leading and trailing spaces
+     */
     public String getUserInput() {
         return input.nextLine().trim();
     }
 
-    public String[] getUserInputAndSplit(boolean caseSensitive) {
+    /**
+     * Get a String array of the input line
+     * <p>
+     * Read a line from the InputStream, the split it by whitespace. Set the caseInsensitive flag to true to convert the
+     * input to lower case, effectively ignoring the case of the input.
+     *
+     * @param caseInsensitive true if we want to ignore the case of the input
+     * @return String array of the input split on whitespace
+     */
+    public String[] getUserInputAndSplit(final boolean caseInsensitive) {
         String input = getUserInput();
-        if (caseSensitive) { input = input.toLowerCase(Locale.ROOT); }
+        if (caseInsensitive) { input = input.toLowerCase(Locale.ROOT); }
         return input.split("\\s+");
     }
 
+    /**
+     * Get an integer greater than 0
+     *
+     * @return an Integer greater than 0
+     */
     public int getIntegerUntilAboveZero() {
         IntFunction<Integer> aboveZero = i -> i > 0 ? i : null;
 
@@ -72,7 +111,16 @@ public class ConsoleIOHandler {
         return value;
     }
 
-    public Integer getInteger(IntFunction<Integer> validation) {
+    /**
+     * Get an Integer in a validated range
+     * <p>
+     * Accepts an IntFunction to use for validating the Integer against. Returns null if the input is not able to be
+     * parsed as an Integer.
+     *
+     * @param validation IntFunction to validate the desired range of Integer wanted
+     * @return an Integer that passes the IntFunction
+     */
+    public Integer getInteger(final IntFunction<Integer> validation) {
         try {
             var readIn = this.input.nextLine();
             var parsedInt = Integer.parseInt(readIn);
@@ -82,7 +130,17 @@ public class ConsoleIOHandler {
         }
     }
 
-    public Integer getIntegerInRangeInclusive(int min, int max) {
+    /**
+     * Get a number in the specified range
+     * <p>
+     * Reads input from the user and validates it to be in the specified range. Prints an error message if the input is
+     * a non-integer or not in the valid range.
+     *
+     * @param min the smallest number we will accept
+     * @param max the largest number we will accept
+     * @return a valid number in the specified range
+     */
+    public Integer getIntegerInRangeInclusive(final int min, final int max) {
         IntFunction<Integer> range = i -> (i >= min && i <= max) ? i : null;
 
         Integer value = null;

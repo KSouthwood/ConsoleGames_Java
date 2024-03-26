@@ -15,24 +15,34 @@ import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class ConsoleIOHandlerTest {
 
     private ConsoleIOHandler console;
     private ByteArrayOutputStream outputStream;
+    private PrintStream printStream;
 
     @BeforeEach
     void beforeEach() {
         outputStream = new ByteArrayOutputStream();
+        printStream = new PrintStream(outputStream);
+    }
+
+    ConsoleIOHandler getConsoleWithOutputOnly() {
+        return new ConsoleIOHandler(System.in, printStream);
+    }
+
+    ConsoleIOHandler getConsoleWithInputAndOutput(String input) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        return new ConsoleIOHandler(inputStream, printStream);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"Hello, World!", "I'm Batman.", "Everything is wonderful!"})
     void testPrintln(String toPrint) {
-        console = new ConsoleIOHandler(System.in, new PrintStream(outputStream));
+        console = getConsoleWithOutputOnly();
         console.println(toPrint);
         assertEquals(toPrint + "\n", outputStream.toString());
     }
@@ -40,7 +50,7 @@ public class ConsoleIOHandlerTest {
     @ParameterizedTest
     @ValueSource(strings = {"Crazy?", "I was crazy once.", "Rats make me crazy."})
     void testPrint(String toPrint) {
-        console = new ConsoleIOHandler(System.in, new PrintStream(outputStream));
+        console = getConsoleWithOutputOnly();
         console.print(toPrint);
         assertEquals(toPrint, outputStream.toString());
     }
@@ -48,7 +58,7 @@ public class ConsoleIOHandlerTest {
     @ParameterizedTest
     @ValueSource(strings = {"zero", "one thousand", "negative infinity", "true"})
     void testGetIntegerReturnsNull(String input) {
-        console = new ConsoleIOHandler(new ByteArrayInputStream(input.getBytes()), new PrintStream(outputStream));
+        console = getConsoleWithInputAndOutput(input);
         IntFunction<Integer> anyInteger = i -> i;
         Integer result = console.getInteger(anyInteger);
         assertNull(result);
@@ -62,7 +72,7 @@ public class ConsoleIOHandlerTest {
             "42, 42"
     })
     void testGetIntegerReturnsInteger(String input, Integer expected) {
-        console = new ConsoleIOHandler(new ByteArrayInputStream(input.getBytes()), new PrintStream(outputStream));
+        console = getConsoleWithInputAndOutput(input);
         IntFunction<Integer> anyInteger = i -> i;
         Integer result = console.getInteger(anyInteger);
         assertEquals(expected, result);
@@ -71,7 +81,7 @@ public class ConsoleIOHandlerTest {
     @ParameterizedTest
     @MethodSource("getIntegerUntilAboveZeroTestArguments")
     void testGetIntegerUntilAboveZero(String input, String output, int expected) {
-        console = new ConsoleIOHandler(new ByteArrayInputStream(input.getBytes()), new PrintStream(outputStream));
+        console = getConsoleWithInputAndOutput(input);
         int result = console.getIntegerUntilAboveZero();
         assertEquals(output, outputStream.toString());
         assertEquals(expected, result);
@@ -90,13 +100,13 @@ public class ConsoleIOHandlerTest {
     @ParameterizedTest
     @MethodSource("testGetIntegerInRangeInclusiveArguments")
     void testGetIntegerInRangeInclusive(int min, int max, String input, String output, int expected) {
-        console = new ConsoleIOHandler(new ByteArrayInputStream(input.getBytes()), new PrintStream(outputStream));
+        console = getConsoleWithInputAndOutput(input);
         int result = console.getIntegerInRangeInclusive(min, max);
         assertEquals(output, outputStream.toString());
         assertEquals(expected, result);
     }
 
-    public static Stream<Arguments> testGetIntegerInRangeInclusiveArguments() {
+    static Stream<Arguments> testGetIntegerInRangeInclusiveArguments() {
         BiFunction<Integer, Integer, String> errorMessage = (min, max) -> String.format("Error! Number should be between %d and %d. Try again: ", min, max);
 
         return Stream.of(
@@ -105,6 +115,22 @@ public class ConsoleIOHandlerTest {
                 arguments(-5, 5, "10\n-10\n6\n-6\n0\n", errorMessage.apply(-5, 5).repeat(4), 0),
                 arguments(-5, 5, "10\n-10\n6\n-6\n-5\n", errorMessage.apply(-5, 5).repeat(4), -5),
                 arguments(-5, 5, "10\n-10\n6\n-6\n5\n", errorMessage.apply(-5, 5).repeat(4), 5)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testGetUserInputAndSplitArguments")
+    void testGetUserInputAndSplit(String input, boolean caseInsensitive, String[] expected) {
+        console = getConsoleWithInputAndOutput(input);
+        String[] result = console.getUserInputAndSplit(caseInsensitive);
+        assertArrayEquals(expected, result);
+    }
+
+    static Stream<Arguments> testGetUserInputAndSplitArguments() {
+        return Stream.of(
+                arguments("It was the best of times", false, new String[]{"It", "was", "the", "best", "of", "times"}),
+                arguments("   Multiple\tTyPeS  oF \t SpACeS    ", true, new String[]{"multiple", "types", "of", "spaces"}),
+                arguments("SomE InSaN3 KiNd oF TeXt!", false, new String[]{"SomE", "InSaN3", "KiNd", "oF", "TeXt!"})
         );
     }
 }
