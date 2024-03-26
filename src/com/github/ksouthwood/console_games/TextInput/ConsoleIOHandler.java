@@ -3,6 +3,7 @@ package com.github.ksouthwood.console_games.TextInput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.IntFunction;
@@ -52,6 +53,12 @@ public class ConsoleIOHandler {
         return input.nextLine().trim();
     }
 
+    public String[] getUserInputAndSplit(boolean caseSensitive) {
+        String input = getUserInput();
+        if (caseSensitive) { input = input.toLowerCase(Locale.ROOT); }
+        return input.split("\\s+");
+    }
+
     public int getIntegerUntilAboveZero() {
         IntFunction<Integer> aboveZero = i -> i > 0 ? i : null;
 
@@ -73,5 +80,19 @@ public class ConsoleIOHandler {
         } catch (NumberFormatException | IllegalStateException e) {
             return null;
         }
+    }
+
+    public Integer getIntegerInRangeInclusive(int min, int max) {
+        IntFunction<Integer> range = i -> (i >= min && i <= max) ? i : null;
+
+        Integer value = null;
+        while (value == null) {
+            value = getInteger(range);
+            if (value == null) {
+                output.printf("Error! Number should be between %d and %d. Try again: ", min, max);
+            }
+        }
+
+        return value;
     }
 }
