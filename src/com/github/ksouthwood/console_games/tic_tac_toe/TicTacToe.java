@@ -10,6 +10,7 @@ public class TicTacToe {
     }
 
     public void start() {
+        console.clear();
         welcomeMessage();
         new Controller(console).start();
         System.out.println("Returning now...");

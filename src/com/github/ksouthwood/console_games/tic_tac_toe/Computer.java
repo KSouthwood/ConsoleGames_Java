@@ -1,26 +1,43 @@
 package com.github.ksouthwood.console_games.tic_tac_toe;
 
+import com.github.ksouthwood.console_games.TextInput.ConsoleIOHandler;
+
 abstract class Computer extends Player{
+    Computer(ConsoleIOHandler console) {
+        super(console);
+    }
 }
 
 class EasyAI extends Computer {
 
-    @Override
-    void getCellToPlay() {
+    EasyAI(ConsoleIOHandler console) {
+        super(console);
+    }
 
+    @Override
+    int getCellToPlay() {
+        return -1;
     }
 }
 
 class MediumAI extends Computer {
-    @Override
-    void getCellToPlay() {
+    MediumAI(ConsoleIOHandler console) {
+        super(console);
+    }
 
+    @Override
+    int getCellToPlay() {
+        return -1;
     }
 }
 
 class HardAI extends Computer {
-    @Override
-    void getCellToPlay() {
+    HardAI(ConsoleIOHandler console) {
+        super(console);
+    }
 
+    @Override
+    int getCellToPlay() {
+        return -1;
     }
 }
