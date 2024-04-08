@@ -114,10 +114,11 @@ class Board {
         String row1 = rowFormat.formatted(verticalEdge, board[0].getMark(), board[1].getMark(), board[2].getMark());
         String row2 = rowFormat.formatted(verticalEdge, board[3].getMark(), board[4].getMark(), board[5].getMark());
         String row3 = rowFormat.formatted(verticalEdge, board[6].getMark(), board[7].getMark(), board[8].getMark());
-        return topBorder + "\n" +
-                row1 + "\n" +
-                row2 + "\n" +
-                row3 + "\n" +
-                botBorder;
+        return "    1 2 3\n" +
+                "  " + topBorder + "\n" +
+                "1 " + row1 + "\n" +
+                "2 " + row2 + "\n" +
+                "3 " + row3 + "\n" +
+                "  " + botBorder;
     }
 }

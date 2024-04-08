@@ -1,6 +1,5 @@
-package com.github.ksouthwood.console_games;
+package com.github.ksouthwood.console_games.TextInput;
 
-import com.github.ksouthwood.console_games.TextInput.ConsoleIOHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
